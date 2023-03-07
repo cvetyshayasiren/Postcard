@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "com.db.postcard";
+option java_multiple_files = true;
+
+enum Stage {
+  START = 0;
+  INCOMPLETE = 1;
+  FINISH = 2;
+  COMPLETE = 3;
+}
+
+message CharacterList {
+  repeated string character = 1;
+  string current = 2;
+  Stage stage = 3;
+}
