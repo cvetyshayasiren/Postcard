@@ -3,6 +3,7 @@ package com.db.postcard
 import android.app.Activity
 import android.content.Context
 import androidx.compose.animation.*
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,22 +66,25 @@ fun ImageTextButton(){
             Column() {
                 if(CharacterManager.stage == Stage.COMPLETE){ ExpandedCharacters(context = context) }
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                    Image(
-                        bitmap = CharacterManager.image.asImageBitmap(),
-                        contentDescription = CharacterManager.currentCharacter,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .clip(RoundedCornerShape(20.dp))
-                            .shadow(
-                                elevation = 8.dp, shape = RoundedCornerShape(20.dp), clip = true
-                            )
-                            .border(
-                                width = 4.dp,
-                                brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                    )
+                    AnimateVisibility {
+                        Image(
+                            bitmap = CharacterManager.image.asImageBitmap(),
+                            contentDescription = CharacterManager.currentCharacter,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(20.dp))
+                                .shadow(
+                                    elevation = 8.dp, shape = RoundedCornerShape(20.dp), clip = true
+                                )
+                                .border(
+                                    width = 4.dp,
+                                    brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                        )
+                    }
+
                 }
             }
         }
@@ -92,11 +96,13 @@ fun ImageTextButton(){
                 .padding(horizontal = 50.dp),
             Alignment.Center
         ) {
-            Text(
-                text = CharacterManager.text,
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                color = CharacterManager.fontColor
-            )
+            AnimateVisibility {
+                Text(
+                    text = CharacterManager.text,
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    color = CharacterManager.fontColor
+                )
+            }
         }
 
         Box(
@@ -105,29 +111,32 @@ fun ImageTextButton(){
                 .fillMaxSize(),
             Alignment.Center
         ) {
-            Button(
-                colors = ButtonDefaults.buttonColors(CharacterManager.gradient[0]),
-                modifier = Modifier
-                    .background(
-                        brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .shadow(
-                        elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = true
-                    )
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(
-                        width = 4.dp,
-                        brush = Brush.verticalGradient(CharacterManager.gradient),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .size(200.dp, 50.dp),
-                onClick = {
-                    MyMediaPlayer.stop()
-                    CharacterManager.nextCharacter(context)
-                }) {
-                Text("\uD83C\uDF89")
+            if(CharacterManager.isButton){
+                Button(
+                    colors = ButtonDefaults.buttonColors(CharacterManager.gradient[0]),
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .shadow(
+                            elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = true
+                        )
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(
+                            width = 4.dp,
+                            brush = Brush.verticalGradient(CharacterManager.gradient),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .size(200.dp, 50.dp),
+                    onClick = {
+                        MyMediaPlayer.stop()
+                        CharacterManager.nextCharacter(context)
+                    }) {
+                    Text("\uD83C\uDF89")
+                }
             }
+
         }
     }
 }
@@ -182,6 +191,17 @@ fun ExpandedCharacters(context: Context){
             }
         }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimateVisibility(content: @Composable() AnimatedVisibilityScope.() -> Unit) {
+    AnimatedVisibility(
+        visible = !CharacterManager.isTransit,
+        enter = scaleIn() + fadeIn(),
+        exit = scaleOut() + fadeOut(),
+        content = content
+    )
 }
 
 @Composable

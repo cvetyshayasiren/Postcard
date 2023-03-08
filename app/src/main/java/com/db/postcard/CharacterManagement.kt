@@ -20,6 +20,7 @@ import kotlin.math.abs
 object CharacterManager{
     private var isInit: Boolean = false
     private var characterList: List<String> = listOf()
+    private var nextFontColor: Color = Color.White
 
     var currentCharacter: String by mutableStateOf("")
     var stage: Stage by mutableStateOf(Stage.START)
@@ -28,6 +29,8 @@ object CharacterManager{
     var image: Bitmap by mutableStateOf(Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888))
     var gradient: List<Color> by mutableStateOf(listOf(Color.Transparent, Color.Transparent))
     var sound: AssetFileDescriptor? by mutableStateOf(null)
+    var isTransit: Boolean by mutableStateOf(false)
+    var isButton: Boolean by mutableStateOf(true)
 
 
     fun init(context: Context){
@@ -75,12 +78,14 @@ object CharacterManager{
     }
 
     private fun updateCharacterData(context: Context){
+        isTransit = true
+        isButton = false
         val startGradient = gradient
-        text = receiveText(context)
-        image = receiveImage(context)
+        val nextText = receiveText(context)
+        val nextImage = receiveImage(context)
         sound = receiveSound(context)
-        val targetGradient = receiveGradient(image)
-        CoroutineScope(Dispatchers.Main).launch { colorTransition(startGradient, targetGradient) }
+        val targetGradient = receiveGradient(nextImage)
+        CoroutineScope(Dispatchers.Main).launch { colorTransition(startGradient, targetGradient, nextText, nextImage) }
     }
 
     private fun onDataStore(context: Context) {
@@ -153,7 +158,7 @@ object CharacterManager{
 
     private fun calculateFontColor(rgb: Color){
         val brightness = 0.299*rgb.red + 0.587*rgb.green + 0.114*rgb.blue
-        fontColor = if(brightness < 0.8) Color.White else Color.Black
+        nextFontColor = if(brightness < 0.8) Color.White else Color.Black
     }
 
     private fun receiveSound(context: Context): AssetFileDescriptor {
@@ -165,9 +170,12 @@ object CharacterManager{
         }
     }
 
-    private suspend fun colorTransition(startColor: List<Color> = listOf(Color.White, Color.White),
-                                           targetColor: List<Color> = listOf(Color.Black, Color.Black),
-                                           frames: Int = 30, duration: Int = 1000){
+    private suspend fun colorTransition(startColor: List<Color>,
+                                        targetColor: List<Color>,
+                                        nextText: String,
+                                        nextImage: Bitmap,
+                                        frames: Int = 30,
+                                        duration: Int = 1000){
 
         val rTransitListUp = transitionListOfFloat(startColor[0].red, targetColor[0].red, frames)
         val gTransitListUp = transitionListOfFloat(startColor[0].green, targetColor[0].green, frames)
@@ -184,16 +192,23 @@ object CharacterManager{
                 Color(rTransitListUp[it], gTransitListUp[it], bTransitListUp[it]),
                 Color(rTransitListDown[it], gTransitListDown[it], bTransitListDown[it]))
             delay(delay)
+            if(it == frames/2){
+                image = nextImage
+                text = nextText
+                fontColor = nextFontColor
+                isTransit = false
+            }
         }
+        isButton = true
     }
 
     private fun transitionListOfFloat(from: Float, to: Float, parts: Int): List<Float>{
         return if(from < to){
             val part = (to - from) / parts
-            List(parts){from + (it + 1) * part}
+            List(parts){(from + (it + 1) * part).coerceAtMost(255f)}
         } else{
             val part = (from - to) / parts
-            List(parts){from - (it + 1) * part}
+            List(parts){(from - (it + 1) * part).coerceAtLeast(0f)}
         }
     }
 }
