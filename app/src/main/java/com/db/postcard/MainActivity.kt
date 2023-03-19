@@ -34,4 +34,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        MyMediaPlayer.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MyMediaPlayer.play()
+    }
 }

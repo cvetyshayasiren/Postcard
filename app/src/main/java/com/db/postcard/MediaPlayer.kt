@@ -28,4 +28,12 @@ object MyMediaPlayer {
             isPlaying = false
         }
     }
+
+    fun pause(){
+        mediaPlayer?.pause()
+    }
+
+    fun play(){
+        mediaPlayer?.start()
+    }
 }

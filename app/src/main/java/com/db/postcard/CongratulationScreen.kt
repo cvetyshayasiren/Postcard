@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
@@ -166,7 +167,7 @@ fun ExpandedCharacters(context: Context){
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
-            label = {Text("Выбирай")},
+            label = {Text("Выбирай", style = TextStyle(CharacterManager.fontColor))},
             trailingIcon = {
                 Icon(icon,"contentDescription",
                     Modifier.clickable { expanded = !expanded })
