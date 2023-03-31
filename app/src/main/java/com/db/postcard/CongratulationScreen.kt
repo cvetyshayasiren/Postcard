@@ -177,10 +177,11 @@ fun ExpandedCharacters(context: Context){
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .width(with(LocalDensity.current){textFieldSize.width.toDp()})
+                .background(brush = Brush.verticalGradient(CharacterManager.gradient.reversed()))
         ) {
             characterList.forEach { character ->
                 DropdownMenuItem(
-                    text = { Text(character) },
+                    text = { Text(text = character, color = CharacterManager.fontColor) },
                     onClick = {
                         selectedCharacter = character
                         expanded = false
