@@ -56,36 +56,35 @@ fun ImageTextButton(){
     Column(
         Modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(colors = CharacterManager.gradient))
+            .background(brush = Brush.verticalGradient(colors = CharacterManager.gradient)),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .weight(0.6f)
                 .fillMaxSize(),
-            Alignment.Center
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column() {
-                if(CharacterManager.stage == Stage.COMPLETE){ ExpandedCharacters(context = context) }
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                    AnimateVisibility {
-                        Image(
-                            bitmap = CharacterManager.image.asImageBitmap(),
-                            contentDescription = CharacterManager.currentCharacter,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(20.dp))
-                                .shadow(
-                                    elevation = 8.dp, shape = RoundedCornerShape(20.dp), clip = true
-                                )
-                                .border(
-                                    width = 4.dp,
-                                    brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                        )
-                    }
-
+            if(CharacterManager.stage == Stage.COMPLETE){ ExpandedCharacters(context = context) }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                AnimateVisibility {
+                    Image(
+                        bitmap = CharacterManager.image.asImageBitmap(),
+                        contentDescription = CharacterManager.currentCharacter,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(20.dp))
+                            .shadow(
+                                elevation = 8.dp, shape = RoundedCornerShape(20.dp), clip = true
+                            )
+                            .border(
+                                width = 4.dp,
+                                brush = Brush.verticalGradient(CharacterManager.gradient.reversed()),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                    )
                 }
             }
         }
@@ -159,11 +158,11 @@ fun ExpandedCharacters(context: Context){
 
     Column(modifier = Modifier.clickable { expanded = !expanded }) {
         OutlinedTextField(
+            shape = RoundedCornerShape(16.dp),
             enabled = false,
             value = selectedCharacter,
             onValueChange = { selectedCharacter = it },
             modifier = Modifier
-                .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },

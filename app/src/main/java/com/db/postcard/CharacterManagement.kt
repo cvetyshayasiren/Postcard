@@ -144,13 +144,13 @@ object CharacterManager{
             (blue / 1000).toInt()
         )
 
-        val sRed = (rgb.red + .05f).coerceAtMost(1f)
-        val sGreen = (rgb.green + .05f).coerceAtMost(1f)
-        val sBlue = (rgb.blue + .05f).coerceAtMost(1f)
+        val sRed = (rgb.red + .1f).coerceAtMost(1f)
+        val sGreen = (rgb.green + .1f).coerceAtMost(1f)
+        val sBlue = (rgb.blue + .1f).coerceAtMost(1f)
 
-        val eRed = (rgb.red - .05f).coerceAtLeast(0f)
-        val eGreen = (rgb.green - .05f).coerceAtLeast(0f)
-        val eBlue = (rgb.blue - .05f).coerceAtLeast(0f)
+        val eRed = (rgb.red - .1f).coerceAtLeast(0f)
+        val eGreen = (rgb.green - .1f).coerceAtLeast(0f)
+        val eBlue = (rgb.blue - .1f).coerceAtLeast(0f)
         calculateFontColor(rgb)
 
         return listOf(Color(sRed, sGreen, sBlue), Color(eRed, eGreen, eBlue))
@@ -162,7 +162,6 @@ object CharacterManager{
     }
 
     private fun receiveSound(context: Context): AssetFileDescriptor {
-        println("receiveSound: $currentCharacter")
         return try {
             context.assets.openFd("characters/$currentCharacter/snd.mp3")
         } catch (e: FileNotFoundException){
@@ -183,8 +182,6 @@ object CharacterManager{
         val rTransitListDown = transitionListOfFloat(startColor[1].red, targetColor[1].red, frames)
         val gTransitListDown = transitionListOfFloat(startColor[1].green, targetColor[1].green, frames)
         val bTransitListDown = transitionListOfFloat(startColor[1].blue, targetColor[1].blue, frames)
-        println("${startColor[0].red} ${targetColor[0].red} $rTransitListUp")
-        println("${startColor[1].red} ${targetColor[1].red} $rTransitListDown")
 
         val delay: Long = (duration / frames).toLong()
         repeat(frames){
